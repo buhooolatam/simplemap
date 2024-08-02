@@ -5,13 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mapa de Coordenadas</title>
     <style>
+        /* Estilos para el encabezado */
+        #header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #000;
+            color: #fff;
+            padding: 10px 20px;
+        }
+
+        #header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .header-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Estilos para el mapa */
         #map {
-            height: 100vh;
+            height: calc(100vh - 60px); /* Ajusta la altura del mapa para que no cubra el encabezado */
             width: 100%;
         }
     </style>
 </head>
 <body>
+    <!-- Encabezado con botones -->
+    <div id="header">
+        <h1>Buhooo</h1>
+        <div class="button-container">
+            <button class="header-button" id="backButton">Atrás</button>
+            <button class="header-button" id="resetButton">Resetear</button>
+        </div>
+    </div>
+
+    <!-- Mapa -->
     <div id="map"></div>
 
     <script>
