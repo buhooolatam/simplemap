@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa con Coordenadas</title>
+    <title>Mapa de Coordenadas</title>
     <style>
         #map {
             height: 100vh;
@@ -13,39 +13,46 @@
 </head>
 <body>
     <div id="map"></div>
-    
+
     <script>
+        // Function to fetch coordinates from the JSON file
         async function fetchCoordinates() {
             try {
-                const response = await fetch('/coor1.json'); // Asegúrate de que la ruta sea correcta
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                const response = await fetch('coor1.json');
                 const data = await response.json();
                 return data.coordinates;
             } catch (error) {
-                console.error('Error al cargar coordenadas:', error);
+                console.error('Error fetching coordinates:', error);
             }
         }
 
+        // Initialize the map
         function initMap() {
-            const map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 12,
-                center: { lat: -17.713042, lng: -63.180106 } // Coordenada inicial
-            });
+            // Define the map options
+            const mapOptions = {
+                zoom: 13,
+                center: { lat: -17.713042, lng: -63.180106 }, // Initial center of the map
+            };
 
+            // Create a new map
+            const map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+            // Fetch coordinates and place markers
             fetchCoordinates().then(coordinates => {
                 coordinates.forEach(coord => {
+                    // Extract latitude and longitude, and ensure they are numbers
+                    const lat = parseFloat(coord[1]);
+                    const lng = parseFloat(coord[0]);
+
+                    // Create a new marker
                     const marker = new google.maps.Marker({
-                        position: { lat: coord.lat, lng: coord.lng },
-                        map: map
+                        position: { lat: lat, lng: lng },
+                        map: map,
                     });
 
-                    // Añade un listener para hacer algo al hacer clic en el marcador
-                    marker.addListener('click', function() {
-                        const coords = `${marker.getPosition().lat()}, ${marker.getPosition().lng()}`;
-                        console.log('Coordenadas capturadas:', coords);
-                        // Aquí puedes agregar lógica adicional, como mostrar un formulario
+                    // Add a click listener to the marker to log the coordinates
+                    marker.addListener('click', () => {
+                        console.log('Coordenadas:', lat, lng);
                     });
                 });
             }).catch(error => {
@@ -53,8 +60,8 @@
             });
         }
     </script>
-    
-    <!-- Carga la API de Google Maps -->
+
+    <!-- Include Google Maps API -->
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCYaUFV_9dHJBxCmJd4GsEYsUs_26Ngq1o&callback=initMap"></script>
 </body>
 </html>
