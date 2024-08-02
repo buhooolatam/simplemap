@@ -71,6 +71,9 @@
 
             map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
+            // Inicializa el array de marcadores
+            map.markers = [];
+
             const customIcon = {
                 path: "M12 2C8.13 2 5 5.13 5 9c0 3.25 2.6 5.89 6.24 8.85.37.32.85.32 1.22 0C16.4 14.89 19 12.25 19 9c0-3.87-3.13-7-7-7zm0 11c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z",
                 fillColor: "#D3D3D3",
@@ -93,11 +96,17 @@
                             icon: getMarkerIcon(index)
                         });
 
+                        // Añadir el marcador al array de marcadores
+                        map.markers.push(marker);
+
                         // Añadir listener para click en el marcador
                         marker.addListener('click', function () {
                             openInfoWindow(marker, index);
                         });
                     });
+
+                    // Actualiza los marcadores según localStorage al cargar
+                    updateMarkers();
                 })
                 .catch(error => console.error('Error al cargar las coordenadas:', error));
         }
@@ -133,6 +142,9 @@
         }
 
         function updateMarkers() {
+            // Asegura que map.markers esté definido
+            if (!map.markers) return;
+
             // Recorre todos los marcadores y actualiza el color si están registrados
             map.markers.forEach((marker, index) => {
                 if (localStorage.getItem(`marker_${index}`)) {
