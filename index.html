@@ -54,15 +54,16 @@
 
             const map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
-            // Icono SVG personalizado
             const customIcon = {
-                path: "M12 2C8.13 2 5 5.13 5 9c0 3.25 2.6 5.89 6.24 8.85.37.32.85.32 1.22 0C16.4 14.89 19 12.25 19 9c0-3.87-3.13-7-7-7zm0 11c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z",
-                fillColor: "#B0B0B0", // Color plomo
-                fillOpacity: 1,
-                scale: 2,
-                strokeWeight: 0,
-                anchor: new google.maps.Point(12, 24),
-            };
+    path: "M12 2C8.13 2 5 5.13 5 9c0 3.25 2.6 5.89 6.24 8.85.37.32.85.32 1.22 0C16.4 14.89 19 12.25 19 9c0-3.87-3.13-7-7-7zm0 11c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z",
+    fillColor: "#D3D3D3", // Color más claro (gris claro)
+    fillOpacity: 1,
+    scale: 1.5, // Tamaño reducido
+    strokeWeight: 1,
+    strokeColor: "#A0A0A0", // Color del borde
+    anchor: new google.maps.Point(10, 20) // Ajusta el anclaje si es necesario
+};
+
 
             fetch('coor1.json')
                 .then(response => response.json())
