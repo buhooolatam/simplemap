@@ -47,6 +47,21 @@
             color: #888;
             font-weight: bold;
         }
+
+        .info-window {
+            position: relative;
+            width: 100px;
+        }
+
+        .info-window button {
+            width: 100%;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -114,9 +129,8 @@
         function openInfoWindow(marker, index) {
             const infoWindow = new google.maps.InfoWindow({
                 content: `
-                    <div style="position: relative;">
+                    <div class="info-window">
                         <span class="close-btn" onclick="closeInfoWindow()">x</span>
-                        <h4>Opciones del Marcador</h4>
                         <button onclick="registerMarker(${index})">Registrar</button>
                     </div>
                 `
