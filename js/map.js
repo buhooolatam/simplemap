@@ -38,10 +38,10 @@ function initMap() {
                 // Agrega un evento de clic a cada marcador
                 marker.addListener('click', function() {
                     const markerPosition = marker.getPosition();
-                    const coords = `${markerPosition.lat()}, ${markerPosition.lng()}`;
+                    const coords = `${markerPosition.lat()},${markerPosition.lng()}`;
                     console.log('Coordenadas capturadas:', coords);
 
-                    // Abrir el formulario con las coordenadas capturadas
+                    // Abrir el formulario en Vercel con las coordenadas capturadas
                     window.open(`https://form1-orpin.vercel.app/?coords=${encodeURIComponent(coords)}`, '_blank');
                 });
             });
