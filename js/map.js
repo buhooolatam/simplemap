@@ -82,3 +82,26 @@ function initMap() {
         })
         .catch(error => console.error('Error al cargar las coordenadas:', error));
 }
+// Función para abrir el formulario de ventas al hacer clic en un punto del mapa
+function openSaleForm(coords) {
+    console.log('Intentando abrir el formulario con las coordenadas:', coords);
+    const url = `https://form1-orpin.vercel.app/?coords=${encodeURIComponent(coords)}`;
+    console.log('URL formada:', url);
+    window.open(url, '_blank');
+}
+
+// Función para manejar el registro del marcador
+function registerMarker(marker) {
+    const position = marker.getPosition();
+    const coords = `${position.lat()},${position.lng()}`;
+    console.log('Marcador registrado con coordenadas:', coords);
+    marker.setIcon({
+        path: "M12 2C8.13 2 5 5.13 5 9c0 3.25 2.6 5.89 6.24 8.85.37.32.85.32 1.22 0C16.4 14.89 19 12.25 19 9c0-3.87-3.13-7-7-7zm0 11c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z",
+        fillColor: "#FF0000", // Cambiar color a rojo
+        fillOpacity: 1,
+        scale: 1.5,
+        strokeWeight: 0,
+        anchor: new google.maps.Point(12, 24)
+    });
+    openSaleForm(coords);
+}
