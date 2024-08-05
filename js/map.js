@@ -63,9 +63,6 @@ function initMap() {
                             const coords = `${markerPosition.lat()},${markerPosition.lng()}`;
                             console.log('Coordenadas capturadas:', coords);
 
-                            // Abrir el formulario en Vercel con las coordenadas capturadas
-                            window.open(`https://form1-orpin.vercel.app/?coords=${encodeURIComponent(coords)}`, '_blank');
-
                             // Cambiar el color del marcador a rojo
                             marker.setIcon({
                                 path: "M12 2C8.13 2 5 5.13 5 9c0 3.25 2.6 5.89 6.24 8.85.37.32.85.32 1.22 0C16.4 14.89 19 12.25 19 9c0-3.87-3.13-7-7-7zm0 11c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z",
@@ -75,6 +72,9 @@ function initMap() {
                                 strokeWeight: 0,
                                 anchor: new google.maps.Point(12, 24)
                             });
+
+                            // Abrir el formulario en Vercel con las coordenadas capturadas
+                            window.open(`https://form1-orpin.vercel.app/?coords=${encodeURIComponent(coords)}`, '_blank');
                         });
                     });
                 });
