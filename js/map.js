@@ -52,7 +52,9 @@ function initMap() {
 
                     // Evento de clic para el botón "Registrar"
                     google.maps.event.addListenerOnce(infowindow, 'domready', () => {
-                        document.getElementById('registerBtn').addEventListener('click', function() {
+                        // Asegúrate de que el botón 'registerBtn' sea único para cada infowindow
+                        const registerBtn = document.getElementById('registerBtn');
+                        registerBtn.addEventListener('click', function() {
                             const markerPosition = marker.getPosition();
                             const coords = `${markerPosition.lat()},${markerPosition.lng()}`;
                             console.log('Coordenadas capturadas:', coords);
