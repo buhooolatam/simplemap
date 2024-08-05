@@ -21,7 +21,7 @@ function initMap() {
             }
 
             // Itera sobre cada coordenada y crea un marcador
-            coordinates.forEach(coord => {
+            coordinates.forEach((coord, index) => {
                 const marker = new google.maps.Marker({
                     position: coord,
                     map: map,
@@ -36,10 +36,14 @@ function initMap() {
                 });
 
                 // Crear infowindow para cada marcador
+                const infowindowContent = `
+                    <div style="text-align: center;">
+                        <button id="registerBtn${index}" style="margin-top: 10px;">Registrar</button>
+                    </div>
+                `;
+
                 const infowindow = new google.maps.InfoWindow({
-                    content: '<div style="text-align: center;">' +
-                             '<button id="registerBtn">Registrar</button>' +
-                             '</div>',
+                    content: infowindowContent,
                 });
 
                 // Agrega un evento de clic a cada marcador para mostrar el infowindow
@@ -50,10 +54,10 @@ function initMap() {
                         shouldFocus: false,
                     });
 
-                    // Evento de clic para el botón "Registrar"
+                    // Asignar evento al botón de registro después de que el infowindow esté listo
                     google.maps.event.addListenerOnce(infowindow, 'domready', () => {
-                        // Asegúrate de que el botón 'registerBtn' sea único para cada infowindow
-                        const registerBtn = document.getElementById('registerBtn');
+                        // El botón 'registerBtn' es único para cada infowindow usando un índice
+                        const registerBtn = document.getElementById(`registerBtn${index}`);
                         registerBtn.addEventListener('click', function() {
                             const markerPosition = marker.getPosition();
                             const coords = `${markerPosition.lat()},${markerPosition.lng()}`;
