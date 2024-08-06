@@ -1,6 +1,6 @@
 // Función de inicialización del mapa
 function initMap() {
-    console.log("Iniciando mapa...");
+    console.log("Inicializando mapa...");
     const map = new google.maps.Map(document.getElementById('map'), {
         zoom: 12,
         center: { lat: -17.7333, lng: -63.1333 } // Centro predeterminado
@@ -10,13 +10,15 @@ function initMap() {
     fetch('coor1.json')
         .then(response => {
             if (!response.ok) {
-                throw new Error('Error al cargar el archivo JSON');
+                throw new Error('Failed to fetch coor1.json');
             }
             return response.json();
         })
         .then(data => {
+            console.log("Datos cargados:", data);
             data.coordinates.forEach((coord, index) => {
                 const latLng = new google.maps.LatLng(coord[1], coord[0]);
+                console.log("Creando marcador para:", latLng.toString());
                 const marker = new google.maps.Marker({
                     position: latLng,
                     map: map,
@@ -31,6 +33,13 @@ function initMap() {
 
                 marker.addListener('click', () => {
                     console.log("Marcador clickeado:", latLng.toString());
+                    marker.setIcon({
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 8,
+                        fillColor: "#FF0000",
+                        fillOpacity: 1,
+                        strokeWeight: 0
+                    });
                     handleMarkerClick(latLng);
                 });
             });
