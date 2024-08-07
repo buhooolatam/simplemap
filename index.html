@@ -26,6 +26,8 @@
     <div id="map"></div>
     <script>
         let map;
+        let markers = []; // Asegurarse de definir markers como un array globalmente.
+
         function initMap() {
             const mapOptions = {
                 center: { lat: -17.713042, lng: -63.180106 },
@@ -43,15 +45,16 @@
                             icon: getMarkerIcon(isRegistered)
                         });
                         marker.addListener('click', () => {
-                             openInfoWindow(marker, index);
-                });
+                            openInfoWindow(marker, index);
+                        });
 
-                map.markers.push(marker);
-            });
+                        markers.push(marker); // Usar el array global.
+                    });
                     updateMarkers();
                 })
                 .catch(error => console.error('Error al cargar las coordenadas:', error));
         }
+
         function openInfoWindow(marker, index) {
             const infoWindow = new google.maps.InfoWindow({
                 content: `<div class="info-window">
@@ -60,10 +63,13 @@
             });
             infoWindow.open(map, marker);
         }
+
         function registerMarker(index, marker) {
             localStorage.setItem(`marker_${index}`, 'true');
             marker.setIcon(getMarkerIcon(true));
+            updateMarkers();
         }
+
         function getMarkerIcon(isRegistered) {
             return {
                 path: google.maps.SymbolPath.CIRCLE,
@@ -74,17 +80,21 @@
                 strokeWeight: 1
             };
         }
+
         function updateMarkers() {
-            if (!map.markers) return;
-            map.markers.forEach((marker, index) => {
+            markers.forEach((marker, index) => {
                 const isRegistered = localStorage.getItem(`marker_${index}`) === 'true';
                 marker.setIcon(getMarkerIcon(isRegistered));
             });
         }
+
         function resetMap() {
             localStorage.clear();
-            updateMarkers();
+            markers.forEach((marker, index) => {
+                marker.setIcon(getMarkerIcon(false));
+            });
         }
+
         function goBack() {
             alert('Funcionalidad de ir atrás aún no implementada.');
         }
