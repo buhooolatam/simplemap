@@ -1,7 +1,7 @@
 function initMap() {
     const map = new google.maps.Map(document.getElementById('map'), {
         zoom: 12,
-        center: { lat: -17.7333, lng: -63.1333 } // Centro predeterminado
+        center: { lat: -17.7333, lng: -63.1333 }
     });
 
     fetch('coor1.json')
@@ -11,29 +11,28 @@ function initMap() {
                 const marker = new google.maps.Marker({
                     position: { lat: coord[1], lng: coord[0] },
                     map: map,
-                    icon: getCustomIcon() // Usamos una función para obtener el ícono
+                    icon: getCustomIcon()
                 });
 
-                const infowindow = new google.maps.InfoWindow({
-                    content: `<div id="info${index}">
-                                <button id="registerBtn${index}">Registrar</button>
-                              </div>`
-                });
-
-                marker.addListener('click', function() {
-                    infowindow.open(map, marker);
-                    google.maps.event.addListenerOnce(infowindow, 'domready', () => {
-                        document.getElementById(`registerBtn${index}`).addEventListener('click', function() {
-                            const coords = `${marker.getPosition().lat()}, ${marker.getPosition().lng()}`;
-                            console.log('Coordenadas capturadas:', coords);
-                            // Lógica para abrir la página con coordenadas
-                            window.open(`https://google.com/?coords=${encodeURIComponent(coords)}`, '_blank');
-                        });
+                marker.addListener('click', () => {
+                    const infowindow = new google.maps.InfoWindow({
+                        content: `<div>
+                                    <button onclick="registerAndRedirect(${coord[1]}, ${coord[0]})">Registrar</button>
+                                  </div>`
                     });
+
+                    infowindow.open(map, marker);
                 });
             });
         })
         .catch(error => console.error('Error al cargar las coordenadas:', error));
+}
+
+function registerAndRedirect(lat, lng) {
+    console.log('Registro y redirección con coordenadas:', lat, lng);
+    // Aquí puedes cambiar el color del marcador si es necesario
+    // Redirigir a Google.com o a cualquier URL necesaria
+    window.location.href = `https://google.com/?coords=${encodeURIComponent(lat + ',' + lng)}`;
 }
 
 function getCustomIcon() {
