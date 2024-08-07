@@ -9,6 +9,7 @@
             margin: 0;
             font-family: Arial, sans-serif;
         }
+
         header {
             background-color: #000;
             color: #fff;
@@ -17,9 +18,11 @@
             justify-content: space-between;
             align-items: center;
         }
+
         header h1 {
             margin: 0;
         }
+
         header button {
             background-color: #fff;
             color: #000;
@@ -29,10 +32,12 @@
             margin-left: 10px;
             border-radius: 5px;
         }
+
         #map {
             height: 90vh;
             width: 100%;
         }
+
         .close-btn {
             position: absolute;
             top: 5px;
@@ -41,10 +46,12 @@
             color: #888;
             font-weight: bold;
         }
+
         .info-window {
             position: relative;
             width: 100px;
         }
+
         .info-window button {
             width: 100%;
             background-color: #007BFF;
@@ -56,6 +63,7 @@
         }
     </style>
 </head>
+
 <body>
     <header>
         <h1>Buhooo</h1>
@@ -65,12 +73,132 @@
         </div>
     </header>
     <div id="map"></div>
-    <script src="map.js"></script>
+
     <script>
-        function redirectToGoogle() {
-            window.location.href = "https://www.google.com";
+        let map;
+
+        function initMap() {
+            const mapOptions = {
+                center: { lat: -17.713042, lng: -63.180106 },
+                zoom: 13
+            };
+
+            map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+            // Inicializa el array de marcadores
+            map.markers = [];
+
+            const customIcon = {
+                path: "M12 2C8.13 2 5 5.13 5 9c0 3.25 2.6 5.89 6.24 8.85.37.32.85.32 1.22 0C16.4 14.89 19 12.25 19 9c0-3.87-3.13-7-7-7zm0 11c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z",
+                fillColor: "#D3D3D3",
+                fillOpacity: 1,
+                scale: 1.5,
+                strokeWeight: 1,
+                strokeColor: "#A0A0A0",
+                anchor: new google.maps.Point(10, 20)
+            };
+
+            // Cargar coordenadas desde JSON
+            fetch('coor1.json')
+                .then(response => response.json())
+                .then(data => {
+                    data.coordinates.forEach((coord, index) => {
+                        const markerPosition = { lat: coord[1], lng: coord[0] };
+                        const marker = new google.maps.Marker({
+                            position: markerPosition,
+                            map: map,
+                            icon: getMarkerIcon(index)
+                        });
+
+                        // Añadir el marcador al array de marcadores
+                        map.markers.push(marker);
+
+                        // Añadir listener para click en el marcador
+                        marker.addListener('click', function () {
+                            openInfoWindow(marker, index);
+                        });
+                    });
+
+                    // Actualiza los marcadores según localStorage al cargar
+                    updateMarkers();
+                })
+                .catch(error => console.error('Error al cargar las coordenadas:', error));
+        }
+
+        function openInfoWindow(marker, index) {
+            const infoWindow = new google.maps.InfoWindow({
+                content: 
+                    <div class="info-window">
+                        <span class="close-btn" onclick="closeInfoWindow()">x</span>
+                        <button onclick="registerMarker(${index})">Registrar</button>
+                    </div>
+                
+            });
+
+            infoWindow.open(map, marker);
+            map.currentInfoWindow = infoWindow;
+        }
+
+        function closeInfoWindow() {
+            if (map.currentInfoWindow) {
+                map.currentInfoWindow.close();
+            }
+        }
+
+        function registerMarker(index) {
+            // Almacenar en localStorage
+            localStorage.setItem(marker_${index}, true);
+
+            // Cambiar el color del marcador a rojo
+            updateMarkers();
+            closeInfoWindow();
+        }
+
+        function updateMarkers() {
+            // Asegura que map.markers esté definido
+            if (!map.markers) return;
+
+            // Recorre todos los marcadores y actualiza el color si están registrados
+            map.markers.forEach((marker, index) => {
+                if (localStorage.getItem(marker_${index})) {
+                    marker.setIcon({
+                        ...marker.getIcon(),
+                        fillColor: "#FF0000" // Cambia el color a rojo
+                    });
+                }
+            });
+        }
+
+        function getMarkerIcon(index) {
+            // Retorna el icono correcto basado en si el marcador está registrado
+            const isRegistered = localStorage.getItem(marker_${index});
+            const color = isRegistered ? "#FF0000" : "#D3D3D3";
+
+            return {
+                path: "M12 2C8.13 2 5 5.13 5 9c0 3.25 2.6 5.89 6.24 8.85.37.32.85.32 1.22 0C16.4 14.89 19 12.25 19 9c0-3.87-3.13-7-7-7zm0 11c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z",
+                fillColor: color,
+                fillOpacity: 1,
+                scale: 1.5,
+                strokeWeight: 1,
+                strokeColor: "#A0A0A0",
+                anchor: new google.maps.Point(10, 20)
+            };
+        }
+
+        function resetMap() {
+            // Limpia localStorage
+            localStorage.clear();
+            // Actualiza los marcadores al color original
+            updateMarkers();
+            alert('Se han reiniciado todos los marcadores.');
+        }
+
+        // Función de demostración para el botón "Atrás"
+        function goBack() {
+            alert('Funcionalidad de ir atrás aún no implementada.');
         }
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCYaUFV_9dHJBxCmJd4GsEYsUs_26Ngq1o&callback=initMap"></script>
 </body>
 </html>
+
