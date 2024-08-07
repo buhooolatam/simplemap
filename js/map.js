@@ -1,7 +1,7 @@
 function initMap() {
     const map = new google.maps.Map(document.getElementById('map'), {
         zoom: 12,
-        center: { lat: -17.7333, lng: -63.1333 }
+        center: { lat: -17.7333, lng: -63.1333 } // Centro predeterminado
     });
 
     fetch('coor1.json')
@@ -11,16 +11,16 @@ function initMap() {
                 const marker = new google.maps.Marker({
                     position: { lat: coord[1], lng: coord[0] },
                     map: map,
-                    icon: getCustomIcon()
+                    icon: getCustomIcon() // Usamos una función para obtener el ícono
                 });
 
-                marker.addListener('click', () => {
-                    const infowindow = new google.maps.InfoWindow({
-                        content: `<div>
-                                    <button onclick="registerAndRedirect(${coord[1]}, ${coord[0]})">Registrar</button>
-                                  </div>`
-                    });
+                const infowindow = new google.maps.InfoWindow({
+                    content: `<div id="info${index}">
+                                <button onclick="redirectToGoogle()">Registrar</button>
+                              </div>`
+                });
 
+                marker.addListener('click', function() {
                     infowindow.open(map, marker);
                 });
             });
@@ -28,11 +28,9 @@ function initMap() {
         .catch(error => console.error('Error al cargar las coordenadas:', error));
 }
 
-function registerAndRedirect(lat, lng) {
-    console.log('Registro y redirección con coordenadas:', lat, lng);
-    // Aquí puedes cambiar el color del marcador si es necesario
-    // Redirigir a Google.com o a cualquier URL necesaria
-    window.location.href = `https://google.com/?coords=${encodeURIComponent(lat + ',' + lng)}`;
+function redirectToGoogle() {
+    console.log('Redireccionando a Google.com');
+    window.location.href = 'https://google.com'; // Redirecciona a Google.com al hacer clic
 }
 
 function getCustomIcon() {
