@@ -11,7 +11,7 @@
         header button { background-color: #fff; color: #000; border: none; padding: 8px 16px; cursor: pointer; margin-left: 10px; border-radius: 5px; }
         #map { height: 90vh; width: 100%; }
         .info-window { position: relative; width: 100px; }
-        .info-window button { width: 100%; background-color: #007BFF; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; }
+        .info-window button { width: 100%; background-color: #007BFF; color: white; border: none, padding: 8px; border-radius: 5px; cursor: pointer; }
         .close-btn { position: absolute; top: 5px; right: 5px; cursor: pointer; color: #888; font-weight: bold; }
     </style>
 </head>
@@ -26,7 +26,7 @@
     <div id="map"></div>
     <script>
         let map;
-        let markers = []; // Asegurarse de definir markers como un array globalmente.
+        let markers = [];
 
         function initMap() {
             const mapOptions = {
@@ -47,8 +47,7 @@
                         marker.addListener('click', () => {
                             openInfoWindow(marker, index);
                         });
-
-                        markers.push(marker); // Usar el array global.
+                        markers.push(marker);
                     });
                     updateMarkers();
                 })
