@@ -33,11 +33,18 @@ function initMap() {
 
 function openInfoWindow(marker, index) {
     const infowindow = new google.maps.InfoWindow({
-        content: `<div style="text-align: center;"><button onclick="registerMarker(${index}, marker)">Registrar</button></div>`
+        content: '<div style="text-align: center;"><button id="registerBtn">Registrar</button></div>'
     });
 
     infowindow.open(map, marker);
+
+    google.maps.event.addListenerOnce(infowindow, 'domready', () => {
+        document.getElementById('registerBtn').onclick = function() {
+            registerMarker(index, marker);
+        };
+    });
 }
+
 
 function registerMarker(index, marker) {
     localStorage.setItem(`marker_${index}`, 'true');
