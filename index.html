@@ -43,9 +43,11 @@
                             icon: getMarkerIcon(isRegistered)
                         });
                         marker.addListener('click', () => {
-                            openInfoWindow(marker, index);
-                        });
-                    });
+                             openInfoWindow(marker, index);
+                });
+
+                map.markers.push(marker);
+            });
                     updateMarkers();
                 })
                 .catch(error => console.error('Error al cargar las coordenadas:', error));
