@@ -26,53 +26,99 @@
     <div id="map"></div>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCYaUFV_9dHJBxCmJd4GsEYsUs_26Ngq1o&callback=initMap"></script>
     <script>
-        let map;
+    let map;
 
-        function initMap() {
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: { lat: -17.713042, lng: -63.180106 },
-                zoom: 13
-            });
-            fetch('coor1.json').then(response => response.json()).then(data => {
+    function initMap() {
+        const mapOptions = {
+            center: { lat: -17.713042, lng: -63.180106 },
+            zoom: 13
+        };
+
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+        map.markers = []; // Inicializa el array de marcadores
+
+        fetch('coor1.json')
+            .then(response => response.json())
+            .then(data => {
                 data.coordinates.forEach((coord, index) => {
+                    const markerPosition = { lat: coord[1], lng: coord[0] };
                     const marker = new google.maps.Marker({
-                        position: { lat: coord[1], lng: coord[0] },
+                        position: markerPosition,
                         map: map,
-                        icon: getMarkerIcon(index)
+                        icon: getMarkerIcon(index, false) // Falso indica no registrado
                     });
-                    google.maps.event.addListener(marker, 'click', () => {
-                        const infoWindow = new google.maps.InfoWindow({
-                            content: `<div class='info-window'><button onclick='redirectToGoogle()'>Registrar</button></div>`
-                        });
-                        infoWindow.open(map, marker);
+                    map.markers.push(marker);
+
+                    marker.addListener('click', function () {
+                        openInfoWindow(marker, index);
                     });
                 });
-            }).catch(error => console.error('Error loading coordinates: ', error));
-        }
+                updateMarkers(); // Actualiza colores según localStorage
+            })
+            .catch(error => console.error('Error al cargar las coordenadas:', error));
+    }
 
-        function getMarkerIcon(index) {
-            return {
-                path: google.maps.SymbolPath.CIRCLE,
-                fillColor: localStorage.getItem(`marker_${index}`) ? "#FF0000" : "#D3D3D3",
-                fillOpacity: 1,
-                scale: 6,
-                strokeColor: '#A0A0A0',
-                strokeWeight: 1
-            };
-        }
+    function openInfoWindow(marker, index) {
+        const infoWindow = new google.maps.InfoWindow({
+            content: `<div class="info-window">
+                        <span class="close-btn" onclick="closeInfoWindow()">x</span>
+                        <button onclick="registerMarker(${index})">Registrar</button>
+                      </div>`
+        });
 
-        function redirectToGoogle() {
-            window.location.href = 'https://www.google.com';
-        }
+        infoWindow.open(map, marker);
+        map.currentInfoWindow = infoWindow;
+    }
 
-        function resetMap() {
-            localStorage.clear();
-            console.log('Map reset.');
-        }
+    function registerMarker(index) {
+        const marker = map.markers[index];
+        const position = marker.getPosition();
+        const coords = `${position.lat()},${position.lng()}`;
 
-        function goBack() {
-            console.log('Back function not implemented.');
+        localStorage.setItem(`marker_${index}`, true); // Guarda el estado en localStorage
+        marker.setIcon(getMarkerIcon(index, true)); // Verdadero indica registrado
+
+        window.location.href = `https://form1-orpin.vercel.app/?coords=${encodeURIComponent(coords)}`; // Redirección con coordenadas
+
+        closeInfoWindow();
+    }
+
+    function updateMarkers() {
+        map.markers.forEach((marker, index) => {
+            const isRegistered = localStorage.getItem(`marker_${index}`) !== null;
+            marker.setIcon(getMarkerIcon(index, isRegistered));
+        });
+    }
+
+    function getMarkerIcon(index, isRegistered) {
+        const color = isRegistered ? "#FF0000" : "#D3D3D3"; // Rojo si registrado, gris si no
+        return {
+            path: "M12 2C8.13 2 5 5.13 5 9c0 3.25 2.6 5.89 6.24 8.85.37.32.85.32 1.22 0C16.4 14.89 19 12.25 19 9c0-3.87-3.13-7-7-7zm0 11c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z",
+            fillColor: color,
+            fillOpacity: 1,
+            scale: 1.5,
+            strokeWeight: 1,
+            strokeColor: "#A0A0A0",
+            anchor: new google.maps.Point(10, 20)
+        };
+    }
+
+    function closeInfoWindow() {
+        if (map.currentInfoWindow) {
+            map.currentInfoWindow.close();
         }
-    </script>
+    }
+
+    function resetMap() {
+        localStorage.clear();
+        updateMarkers();
+        alert('Se han reiniciado todos los marcadores.');
+    }
+
+    function goBack() {
+        alert('Funcionalidad de ir atrás aún no implementada.');
+    }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCYaUFV_9dHJBxCmJd4GsEYsUs_26Ngq1o&callback=initMap"></script>
 </body>
 </html>
