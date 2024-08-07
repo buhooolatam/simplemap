@@ -24,82 +24,69 @@
         </div>
     </header>
     <div id="map"></div>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCYaUFV_9dHJBxCmJd4GsEYsUs_26Ngq1o&callback=initMap"></script>
     <script>
- let map;
-
-function initMap() {
-    const mapOptions = {
-        center: { lat: -17.713042, lng: -63.180106 },
-        zoom: 13
-    };
-
-    map = new google.maps.Map(document.getElementById('map'), mapOptions);
-
-    fetch('coor1.json')
-        .then(response => response.json())
-        .then(data => {
-            data.coordinates.forEach((coord, index) => {
-                const isRegistered = localStorage.getItem(`marker_${index}`) === 'true';
-                const marker = new google.maps.Marker({
-                    position: { lat: coord[1], lng: coord[0] },
-                    map: map,
-                    icon: getMarkerIcon(isRegistered)
-                });
-
-                marker.addListener('click', () => {
-                    openInfoWindow(marker, index);
-                });
-
-                map.markers.push(marker);
-            });
-
-            updateMarkers(); // Asegura que los marcadores se actualicen en base al estado guardado
-        })
-        .catch(error => console.error('Error al cargar las coordenadas:', error));
-}
-
-function openInfoWindow(marker, index) {
-    const infoWindow = new google.maps.InfoWindow({
-        content: `<div class="info-window">
+        let map;
+        function initMap() {
+            const mapOptions = {
+                center: { lat: -17.713042, lng: -63.180106 },
+                zoom: 13
+            };
+            map = new google.maps.Map(document.getElementById('map'), mapOptions);
+            fetch('coor1.json')
+                .then(response => response.json())
+                .then(data => {
+                    data.coordinates.forEach((coord, index) => {
+                        const isRegistered = localStorage.getItem(`marker_${index}`) === 'true';
+                        const marker = new google.maps.Marker({
+                            position: { lat: coord[1], lng: coord[0] },
+                            map: map,
+                            icon: getMarkerIcon(isRegistered)
+                        });
+                        marker.addListener('click', () => {
+                            openInfoWindow(marker, index);
+                        });
+                    });
+                    updateMarkers();
+                })
+                .catch(error => console.error('Error al cargar las coordenadas:', error));
+        }
+        function openInfoWindow(marker, index) {
+            const infoWindow = new google.maps.InfoWindow({
+                content: `<div class="info-window">
                     <button onclick="registerMarker(${index}, marker)">Registrar</button>
-                  </div>`
-    });
-
-    infoWindow.open(map, marker);
-}
-
-function registerMarker(index, marker) {
-    localStorage.setItem(`marker_${index}`, 'true');
-    marker.setIcon(getMarkerIcon(true));
-}
-
-function getMarkerIcon(isRegistered) {
-    return {
-        path: google.maps.SymbolPath.CIRCLE,
-        fillColor: isRegistered ? '#FF0000' : '#D3D3D3',
-        fillOpacity: 1,
-        scale: 6,
-        strokeColor: '#A0A0A0',
-        strokeWeight: 1
-    };
-}
-
-function updateMarkers() {
-    map.markers.forEach((marker, index) => {
-        const isRegistered = localStorage.getItem(`marker_${index}`) === 'true';
-        marker.setIcon(getMarkerIcon(isRegistered));
-    });
-}
-
-function resetMap() {
-    localStorage.clear();
-    updateMarkers();
-}
-    function goBack() {
-        alert('Funcionalidad de ir atrás aún no implementada.');
-    }
-</script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCYaUFV_9dHJBxCmJd4GsEYsUs_26Ngq1o&callback=initMap"></script>
+                </div>`
+            });
+            infoWindow.open(map, marker);
+        }
+        function registerMarker(index, marker) {
+            localStorage.setItem(`marker_${index}`, 'true');
+            marker.setIcon(getMarkerIcon(true));
+        }
+        function getMarkerIcon(isRegistered) {
+            return {
+                path: google.maps.SymbolPath.CIRCLE,
+                fillColor: isRegistered ? '#FF0000' : '#D3D3D3',
+                fillOpacity: 1,
+                scale: 6,
+                strokeColor: '#A0A0A0',
+                strokeWeight: 1
+            };
+        }
+        function updateMarkers() {
+            if (!map.markers) return;
+            map.markers.forEach((marker, index) => {
+                const isRegistered = localStorage.getItem(`marker_${index}`) === 'true';
+                marker.setIcon(getMarkerIcon(isRegistered));
+            });
+        }
+        function resetMap() {
+            localStorage.clear();
+            updateMarkers();
+        }
+        function goBack() {
+            alert('Funcionalidad de ir atrás aún no implementada.');
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCYaUFV_9dHJBxCmJd4GsEYsUs_26Ngq1o&callback=initMap"></script>
 </body>
 </html>
