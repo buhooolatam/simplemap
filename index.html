@@ -26,14 +26,15 @@
     <div id="map"></div>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCYaUFV_9dHJBxCmJd4GsEYsUs_26Ngq1o&callback=initMap"></script>
     <script>
-    let map;
+ let map;
+
 function initMap() {
     const mapOptions = {
         center: { lat: -17.713042, lng: -63.180106 },
         zoom: 13
     };
 
-    const map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
     fetch('coor1.json')
         .then(response => response.json())
@@ -49,7 +50,11 @@ function initMap() {
                 marker.addListener('click', () => {
                     openInfoWindow(marker, index);
                 });
+
+                map.markers.push(marker);
             });
+
+            updateMarkers(); // Asegura que los marcadores se actualicen en base al estado guardado
         })
         .catch(error => console.error('Error al cargar las coordenadas:', error));
 }
@@ -57,19 +62,16 @@ function initMap() {
 function openInfoWindow(marker, index) {
     const infoWindow = new google.maps.InfoWindow({
         content: `<div class="info-window">
-                    <span class="close-btn" onclick="closeInfoWindow()">x</span>
                     <button onclick="registerMarker(${index}, marker)">Registrar</button>
                   </div>`
     });
 
     infoWindow.open(map, marker);
-    map.currentInfoWindow = infoWindow;
 }
 
 function registerMarker(index, marker) {
-    localStorage.setItem(`marker_${index}`, true);
+    localStorage.setItem(`marker_${index}`, 'true');
     marker.setIcon(getMarkerIcon(true));
-    closeInfoWindow();
 }
 
 function getMarkerIcon(isRegistered) {
@@ -83,19 +85,17 @@ function getMarkerIcon(isRegistered) {
     };
 }
 
-function closeInfoWindow() {
-    if (map.currentInfoWindow) {
-        map.currentInfoWindow.close();
-    }
+function updateMarkers() {
+    map.markers.forEach((marker, index) => {
+        const isRegistered = localStorage.getItem(`marker_${index}`) === 'true';
+        marker.setIcon(getMarkerIcon(isRegistered));
+    });
 }
 
 function resetMap() {
     localStorage.clear();
-    map.markers.forEach(marker => {
-        marker.setIcon(getMarkerIcon(false));
-    });
+    updateMarkers();
 }
-
     function goBack() {
         alert('Funcionalidad de ir atrás aún no implementada.');
     }
