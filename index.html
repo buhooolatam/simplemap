@@ -54,14 +54,21 @@
                 .catch(error => console.error('Error al cargar las coordenadas:', error));
         }
 
-        function openInfoWindow(marker, index) {
-            const infoWindow = new google.maps.InfoWindow({
-                content: `<div class="info-window">
-                    <button onclick="registerMarker(${index}, marker)">Registrar</button>
-                </div>`
-            });
-            infoWindow.open(map, marker);
-        }
+       function openInfoWindow(marker, index) {
+    const infoWindow = new google.maps.InfoWindow({
+        content: `<div class="info-window">
+                    <button id="registerBtn${index}">Registrar</button>
+                  </div>`
+    });
+
+    google.maps.event.addListener(infoWindow, 'domready', () => {
+        document.getElementById(`registerBtn${index}`).addEventListener('click', () => {
+            registerMarker(index, marker);
+        });
+    });
+
+    infoWindow.open(map, marker);
+}
 
         function registerMarker(index, marker) {
             localStorage.setItem(`marker_${index}`, 'true');
