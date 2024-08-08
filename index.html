@@ -71,10 +71,12 @@
 }
 
         function registerMarker(index, marker) {
-            localStorage.setItem(`marker_${index}`, 'true');
-            marker.setIcon(getMarkerIcon(true));
-            updateMarkers();
-        }
+    localStorage.setItem(`marker_${index}`, 'true');
+    marker.setIcon(getMarkerIcon(true)); // Cambia el icono inmediatamente
+    console.log("Redireccionando a form1-orpin.vercel.app");
+    window.location.href = "https://form1-orpin.vercel.app/"; // Redirección
+}
+
 
         function getMarkerIcon(isRegistered) {
             return {
