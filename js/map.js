@@ -1,35 +1,49 @@
 let map;
 
 function initMap() {
-    map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 12,
-        center: { lat: -17.7333, lng: -63.1333 } // Centro predeterminado
-    });
+    const mapOptions = {
+        center: { lat: -17.713042, lng: -63.180106 },
+        zoom: 13
+    };
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
     fetch('coor1.json')
         .then(response => response.json())
         .then(data => {
-            data.coordinates.forEach((coord, index) => {
-                const isRegistered = localStorage.getItem(`marker_${index}`) === 'true';
-                const marker = new google.maps.Marker({
-                    position: { lat: coord[1], lng: coord[0] },
-                    map: map,
-                    icon: getMarkerIcon(isRegistered)
-                });
-
-                marker.addListener('click', () => {
-                    openInfoWindow(marker, index);
-                });
-
-                // Si no existe, inicializa el array de marcadores en el mapa
-                if (!map.markers) {
-                    map.markers = [];
-                }
-                map.markers.push(marker);
-            });
+            applyFilter(data.coordinates); // Llama a la función de aplicar filtro
         })
         .catch(error => console.error('Error al cargar las coordenadas:', error));
 }
+
+function applyFilter(coordinates) {
+    const filtro = document.getElementById('filtroTiendas').value;
+    const filteredCoordinates = coordinates.filter(coord => {
+        if (filtro === 'todos') return true;
+        if (filtro === 'conEquipo' && coord.tag === 'conEquipo') return true;
+        if (filtro === 'sinProducto' && coord.tag === 'sinProducto') return true;
+        return false;
+    });
+
+    filteredCoordinates.forEach((coord, index) => {
+        const isRegistered = localStorage.getItem(`marker_${index}`) === 'true';
+        const marker = new google.maps.Marker({
+            position: { lat: coord.lat, lng: coord.lng },
+            map: map,
+            icon: getMarkerIcon(isRegistered)
+        });
+        marker.addListener('click', () => {
+            openInfoWindow(marker, index);
+        });
+        markers.push(marker);
+    });
+}
+
+// Actualiza los marcadores cuando cambia el filtro
+document.getElementById('filtroTiendas').addEventListener('change', () => {
+    resetMap(); // Limpia los marcadores existentes
+    initMap(); // Recarga el mapa con el nuevo filtro
+});
+
 
 function openInfoWindow(marker, index) {
     const infowindow = new google.maps.InfoWindow({
