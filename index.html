@@ -19,7 +19,7 @@
     <header>
         <h1>Buhooo</h1>
         <div>
-        <select id="filtroTiendas">
+        <select id="filtroTiendas" onchange="filterMarkers(this.value)">
             <option value="todos">Todos</option>
             <option value="conEquipo">Con equipos de frío</option>
             <option value="sinProducto">Sin nuestro producto</option>
@@ -47,18 +47,33 @@
                         const marker = new google.maps.Marker({
                             position: { lat: coord[1], lng: coord[0] },
                             map: map,
-                            icon: getMarkerIcon(isRegistered)
+                            title: coord[2], // Almacena el estado en el título del marcador
+                            icon: getMarkerIcon(false)
                         });
+
                         marker.addListener('click', () => {
                             openInfoWindow(marker, index);
                         });
                         markers.push(marker);
                     });
-                    updateMarkers();
+                    filterMarkers('todos'); // Muestra todos los marcadores inicialmente
                 })
                 .catch(error => console.error('Error al cargar las coordenadas:', error));
         }
 
+function filterMarkers(filter) {
+    markers.forEach(marker => {
+        if (filter === 'todos') {
+            marker.setVisible(true);
+        } else if (marker.title === filter) {
+            marker.setVisible(true);
+        } else {
+            marker.setVisible(false);
+        }
+    });
+}
+
+        
        function openInfoWindow(marker, index) {
     const infoWindow = new google.maps.InfoWindow({
         content: `<div class="info-window">
