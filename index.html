@@ -65,13 +65,15 @@ function filterMarkers(filter) {
     markers.forEach(marker => {
         if (filter === 'todos') {
             marker.setVisible(true);
-        } else if (marker.title === filter) {
+        } else if ((filter === 'conEquipo' && marker.title === 'Con equipos de frío') ||
+                   (filter === 'sinProducto' && marker.title === 'Sin nuestro producto')) {
             marker.setVisible(true);
         } else {
             marker.setVisible(false);
         }
     });
 }
+
 
         
        function openInfoWindow(marker, index) {
