@@ -48,9 +48,8 @@
                             position: { lat: coord[1], lng: coord[0] },
                             map: map,
                             title: coord[2], // Almacena el estado en el título del marcador
-                            icon: getMarkerIcon(false)
+                            icon: getMarkerIcon(isRegistered) // Cambia el icono dependiendo si está registrado
                         });
-
                         marker.addListener('click', () => {
                             openInfoWindow(marker, index);
                         });
@@ -61,44 +60,41 @@
                 .catch(error => console.error('Error al cargar las coordenadas:', error));
         }
 
-function filterMarkers(filter) {
-    markers.forEach(marker => {
-        if (filter === 'todos') {
-            marker.setVisible(true);
-        } else if ((filter === 'conEquipo' && marker.title === 'Con equipos de frío') ||
-                   (filter === 'sinProducto' && marker.title === 'Sin nuestro producto')) {
-            marker.setVisible(true);
-        } else {
-            marker.setVisible(false);
+        function filterMarkers(filter) {
+            markers.forEach(marker => {
+                if (filter === 'todos') {
+                    marker.setVisible(true);
+                } else if ((filter === 'conEquipo' && marker.title === 'Con equipos de frío') ||
+                           (filter === 'sinProducto' && marker.title === 'Sin nuestro producto')) {
+                    marker.setVisible(true);
+                } else {
+                    marker.setVisible(false);
+                }
+            });
         }
-    });
-}
 
+        function openInfoWindow(marker, index) {
+            const infoWindow = new google.maps.InfoWindow({
+                content: `<div class="info-window">
+                            <button id="registerBtn${index}">Registrar</button>
+                          </div>`
+            });
 
-        
-       function openInfoWindow(marker, index) {
-    const infoWindow = new google.maps.InfoWindow({
-        content: `<div class="info-window">
-                    <button id="registerBtn${index}">Registrar</button>
-                  </div>`
-    });
+            google.maps.event.addListener(infoWindow, 'domready', () => {
+                document.getElementById(`registerBtn${index}`).addEventListener('click', () => {
+                    registerMarker(index, marker);
+                });
+            });
 
-    google.maps.event.addListener(infoWindow, 'domready', () => {
-        document.getElementById(`registerBtn${index}`).addEventListener('click', () => {
-            registerMarker(index, marker);
-        });
-    });
-
-    infoWindow.open(map, marker);
-}
+            infoWindow.open(map, marker);
+        }
 
         function registerMarker(index, marker) {
-    localStorage.setItem(`marker_${index}`, 'true');
-    marker.setIcon(getMarkerIcon(true)); // Cambia el icono inmediatamente
-    const coords = `${marker.getPosition().lat()},${marker.getPosition().lng()}`;
-    window.location.href = `https://form1-orpin.vercel.app/?coords=${encodeURIComponent(coords)}`;
-}
-
+            localStorage.setItem(`marker_${index}`, 'true');
+            marker.setIcon(getMarkerIcon(true)); // Cambia el icono inmediatamente
+            const coords = `${marker.getPosition().lat()},${marker.getPosition().lng()}`;
+            window.location.href = `https://form1-orpin.vercel.app/?coords=${encodeURIComponent(coords)}`;
+        }
 
         function getMarkerIcon(isRegistered) {
             return {
@@ -111,16 +107,9 @@ function filterMarkers(filter) {
             };
         }
 
-        function updateMarkers() {
-            markers.forEach((marker, index) => {
-                const isRegistered = localStorage.getItem(`marker_${index}`) === 'true';
-                marker.setIcon(getMarkerIcon(isRegistered));
-            });
-        }
-
         function resetMap() {
             localStorage.clear();
-            markers.forEach((marker, index) => {
+            markers.forEach(marker => {
                 marker.setIcon(getMarkerIcon(false));
             });
         }
